@@ -30,14 +30,12 @@ hour_markers:
 repeating_changes:
   - day_of_month: 15
     hour_change: +12
-scheduled_changes:
-  - date: 2018-01-01
-    hour_change: 0  # Acxiom sponsored holiday!
+one_day_changes:
   - date: 2018-02-01 # A PDO day for me
     hour_change: -8
-ranged_changes:  # TODO: make this only work for work weekdays
-  - start_date: 2018-05-01
-    end_date: 2018-05-08
+ranged_changes:
+  - start_date: 2018-01-01
+    end_date: 2018-01-08
     hour_change: -8
 </textarea>
         <!-- Let's just do it onchange for now -->

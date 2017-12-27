@@ -6,3 +6,14 @@ https://codemirror.net/doc/manual.html
 
 - https://cdn.plot.ly/plotly-1.31.2.min.js
 - https://plot.ly/javascript/
+
+TODO:
+- write get_third_party.sh
+- add dots for changes
+- make "today" variable
+- Name traces
+- Add Load/Save
+- Add sliding areas
+- Add multiple changing traces?
+- minify JS
+- Use typescript :)

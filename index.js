@@ -30,7 +30,7 @@ function docToPlotlyJSON(doc) {
 
   ys = []; // This keeps track of the PDO balance per day from start_date to end_date inclusive
   let hours = doc['start_hours'];
-  // am I double allocating here?
+  // TODO: make this not n**2 ...
   for (let d = new Date(start_date); d <= end_date; d.setDate(d.getDate() + 1)) {
     days.push(new Date(d));
 
@@ -40,6 +40,21 @@ function docToPlotlyJSON(doc) {
       }
     }
 
+    for(let obj of doc['one_day_changes']) {
+      // http://adripofjavascript.com/blog/drips/checking-date-equality-in-javascript.html
+      if (obj.date.getTime() === d.getTime()) {
+        hours += obj.hour_change;
+      }
+    }
+
+    for(let obj of doc['ranged_changes']) {
+      let d_time = d.getTime();
+      if (d.getDay() >= 1 && d.getDay() <= 6 && // weekday
+          obj.start_date.getTime() <= d_time &&
+          d_time <= obj.end_date.getTime()) {
+        hours += obj.hour_change;
+      }
+    }
     ys.push(hours);
   }
 
@@ -49,7 +64,6 @@ function docToPlotlyJSON(doc) {
     type: 'scatter'
   });
 
-  // Lets start with hour_markers
   let hour_markers = []
   for(let hr of doc['hour_markers']) {
     let hr_change = Array.apply(null, Array(days_between)).map(Number.prototype.valueOf,hr);
