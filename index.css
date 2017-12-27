@@ -1,0 +1,13 @@
+#codediv {
+    border: 1px solid black;
+    float: left;
+    width: 30%;
+    height: 500px;
+}
+
+#graphdiv {
+    border: 1px solid black;
+    float: right;
+    width: 60%;
+    height: 500px;
+}

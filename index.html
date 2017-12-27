@@ -7,7 +7,7 @@
     <title>title</title>
 
     <!-- Not sure I need this but it's staying for now! -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js" type="text/javascript"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js" type="text/javascript"></script> -->
     <script src="./third_party/codemirror-5.33.0/lib/codemirror.js" type="text/javascript"></script>
     <link rel="stylesheet" href="./third_party/codemirror-5.33.0/lib/codemirror.css">
     <script src="./third_party/codemirror-5.33.0/mode/yaml/yaml.js"></script>
@@ -15,10 +15,33 @@
     <script src="./third_party/js-yaml.min.js" type="text/javascript"></script>
 
     <script src="./third_party/plotly-1.31.2.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="index.css">
   </head>
   <body>
-    <textarea id="code" name="code">
-    </textarea>
+    <div id="codediv">
+      <form>
+        <textarea id="code" name="code">
+--- # PDO
+start_date: 2018-01-01
+end_date: 2018-12-31
+start_hours: 40
+hour_marker: 40  # Mark going below 40
+accrual_day: 15  # Day of month for PDO accrual
+accrual_hours_amount: 12
+changes:
+  - day: 2018-01-01
+    hour_change: 0  # Acxiom sponsored holiday!
+  - day: 2018-02-01 # A PDO day for me
+    hour_change: -8
+
+        </textarea>
+        <!-- Let's just do it onchange for now -->
+        <!-- <input type="submit" value="Submit"> -->
+      </form>
+    </div>
+    <div id="graphdiv">
+
+    </div>
     <script src="index.js" type="text/javascript"></script>
   </body>
 </html>
