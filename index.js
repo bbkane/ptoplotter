@@ -28,10 +28,26 @@ function docToPlotlyJSON(doc) {
   // all of these plots are going to share x-axises...
   let days = [];
 
+  ys = []; // This keeps track of the PDO balance per day from start_date to end_date inclusive
+  let hours = doc['start_hours'];
   // am I double allocating here?
   for (let d = new Date(start_date); d <= end_date; d.setDate(d.getDate() + 1)) {
     days.push(new Date(d));
+
+    for(let obj of doc['repeating_changes']) {
+      if (obj.day_of_month === d.getDate()) {
+        hours += obj.hour_change;
+      }
+    }
+
+    ys.push(hours);
   }
+
+  data.push({
+    x: days,
+    y: ys,
+    type: 'scatter'
+  });
 
   // Lets start with hour_markers
   let hour_markers = []
