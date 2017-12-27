@@ -25,16 +25,21 @@
 start_date: 2018-01-01
 end_date: 2018-12-31
 start_hours: 40
-hour_marker: 40  # Mark going below 40
-accrual_day: 15  # Day of month for PDO accrual
-accrual_hours_amount: 12
-changes:
-  - day: 2018-01-01
+hour_markers:
+  - 40
+repeating_changes:
+  - day_of_month: 15
+    hour_change: +12
+scheduled_changes:
+  - date: 2018-01-01
     hour_change: 0  # Acxiom sponsored holiday!
-  - day: 2018-02-01 # A PDO day for me
+  - date: 2018-02-01 # A PDO day for me
     hour_change: -8
-
-        </textarea>
+ranged_changes:  # TODO: make this only work for work weekdays
+  - start_date: 2018-05-01
+    end_date: 2018-05-08
+    hour_change: -8
+</textarea>
         <!-- Let's just do it onchange for now -->
         <!-- <input type="submit" value="Submit"> -->
       </form>
