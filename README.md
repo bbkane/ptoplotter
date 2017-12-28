@@ -9,7 +9,6 @@ https://codemirror.net/doc/manual.html
 
 TODO:
 - write get_third_party.sh
-- add dots for changes
 - make "today" variable
 - Name traces
 - Add Load/Save
