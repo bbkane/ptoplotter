@@ -10,9 +10,10 @@ https://codemirror.net/doc/manual.html
 TODO:
 - write get_third_party.sh
 - make "today" variable
-- Name traces
 - Add Load/Save
 - Add sliding areas
 - Add multiple changing traces?
 - minify JS
 - Use typescript :)
+- Add title
+- Add better CSS

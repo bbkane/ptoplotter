@@ -24,6 +24,7 @@ function makeFilledArray(length, value) {
   return arr
 }
 
+// This takes the code_editor -> JSON
 function docToPlotlyJSON(doc) {
   // Collect all traces (see https://plot.ly/javascript/line-charts/)
   data = []
@@ -33,12 +34,12 @@ function docToPlotlyJSON(doc) {
   let end_date = doc['end_date'];
   let days_between = daysBetween(start_date, end_date);
 
-  // all of these plots are going to share x-axises...
+  // most of these plots are going to share x-axes...
   let days = [];
 
   ys = []; // This keeps track of the PDO balance per day from start_date to end_date inclusive
   let hours = doc['start_hours'];
-  // TODO: make this not n**2 ...
+
 
   let marker_dates = {
     'positive': [],
@@ -50,6 +51,7 @@ function docToPlotlyJSON(doc) {
   let has_one_day_changes = ('one_day_changes' in doc);
   let has_ranged_changes = ('ranged_changes' in doc);
 
+  // TODO: make this not O(n(a + b + c + ...))
   for (let d = new Date(start_date); d <= end_date; d.setDate(d.getDate() + 1)) {
     days.push(new Date(d));
 
@@ -91,7 +93,8 @@ function docToPlotlyJSON(doc) {
   data.push({
     x: days,
     y: ys,
-    mode: 'scatter'
+    mode: 'scatter',
+    name: 'PDO'
   });
 
   // Add the markers
@@ -99,6 +102,7 @@ function docToPlotlyJSON(doc) {
     x: marker_dates.negative,
     y: makeFilledArray(marker_dates.negative.length, 0),
     mode: 'markers',
+    name: 'losses',
     marker: {
       color: 'red'
     }
@@ -108,6 +112,7 @@ function docToPlotlyJSON(doc) {
     x: marker_dates.neutral,
     y: makeFilledArray(marker_dates.neutral.length, 0),
     mode: 'markers',
+    name: 'no change',
     marker: {
       color: 'blue'
     }
@@ -117,6 +122,7 @@ function docToPlotlyJSON(doc) {
     x: marker_dates.positive,
     y: makeFilledArray(marker_dates.positive.length, 0),
     mode: 'markers',
+    name: 'gains',
     marker: {
       color: 'green'
     }
@@ -124,16 +130,13 @@ function docToPlotlyJSON(doc) {
 
   // Add all hour_markers
   let hour_markers = []
-  for(let hr of doc['hour_markers']) {
-    let hr_change = makeFilledArray(days_between, hr);
-    hour_markers.push(hr_change);
-  }
-
-  for (let ys of hour_markers) {
+  for(let obj of doc['hour_markers']) {
+    let hr_change = makeFilledArray(days_between, obj.hours);
     data.push( {
       x: days,
-      y: ys,
-      mode: 'scatter'
+      y: hr_change,
+      mode: 'scatter',
+      name: obj.label
     });
   }
 
@@ -141,13 +144,37 @@ function docToPlotlyJSON(doc) {
 }
 
 function updateGraph(code_mirror_instance) {
-  let doc = jsyaml.load(code_mirror_instance.getValue());
+  let doc = jsyaml.safeLoad(code_mirror_instance.getValue());
   plotlyJSON = docToPlotlyJSON(doc);
   Plotly.newPlot('graphdiv', data);
 }
 
+const startYAML = `--- # PDO
+start_date: 2018-01-01
+end_date: 2018-12-31
+start_hours: 40
+hour_markers:
+  - label: 40 hr buffer
+    hours: 40
+repeating_changes:
+  - day_of_month: 15
+    hour_change: 12.67
+one_day_changes:
+  - date: 2018-01-01 # New Years
+    hour_change: 0  # Covered by Acxiom
+  - date: 2018-02-01 # A PDO day for me
+    hour_change: -8
+ranged_changes:
+  - start_date: 2018-05-01
+    end_date: 2018-05-08
+    hour_change: -8`;
+
 // https://stackoverflow.com/a/38075603/2958070
 window.addEventListener('load', function() {
+  // The 'value' arg in the CodeMirror constructor isn't working, so let's
+  // hack it in...
+  document.getElementById('code').innerHTML = startYAML;
+
   let editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     lineNumbers: true,
     tabMode: "indent"
