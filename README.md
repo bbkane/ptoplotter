@@ -17,3 +17,5 @@ TODO:
 - Use typescript :)
 - Add title
 - Add better CSS
+- The one_day_changes seem to be off by one
+- If a change happens on a holiday, then PDO isn't counted off. Make sure to account for this
