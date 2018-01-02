@@ -19,13 +19,17 @@ body {
 }
 
 .src, .dst {
-    width: 49%;
     position: relative;
     float: left;
     height: 100%;
 }
 
+.src {
+    width: 30%;
+}
+
 .dst {
+    width: 67%;
     float: right;
 }
 .subheader {
