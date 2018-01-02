@@ -146,7 +146,7 @@ function docToPlotlyJSON(doc) {
 function updateGraph(code_mirror_instance) {
   let doc = jsyaml.safeLoad(code_mirror_instance.getValue());
   plotlyJSON = docToPlotlyJSON(doc);
-  Plotly.newPlot('graphdiv', data);
+  Plotly.newPlot('result', data);
 }
 
 const startYAML = `--- # PDO
@@ -173,9 +173,9 @@ ranged_changes:
 window.addEventListener('load', function() {
   // The 'value' arg in the CodeMirror constructor isn't working, so let's
   // hack it in...
-  document.getElementById('code').innerHTML = startYAML;
+  document.getElementById('source').innerHTML = startYAML;
 
-  let editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+  let editor = CodeMirror.fromTextArea(document.getElementById("source"), {
     lineNumbers: true,
     tabMode: "indent"
   });

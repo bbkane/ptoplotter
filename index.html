@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>PDO PLot</title>
 
-    <!-- Not sure I need this but it's staying for now! -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js" type="text/javascript"></script> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.6/css/bootstrap.css">
+
     <script src="./third_party/codemirror-5.33.0/lib/codemirror.js" type="text/javascript"></script>
     <link rel="stylesheet" href="./third_party/codemirror-5.33.0/lib/codemirror.css">
     <script src="./third_party/codemirror-5.33.0/mode/yaml/yaml.js"></script>
@@ -18,12 +18,20 @@
     <link rel="stylesheet" href="index.css">
   </head>
   <body>
-    <div id="codediv">
-      <textarea id="code" name="code"></textarea>
-      <!-- Let's just do it onchange for now -->
-      <!-- <input type="submit" value="Submit"> -->
+    <div class="header">
+      <h1>PDO Plotter</h1>
     </div>
-    <div id="graphdiv">
+    <div class="content">
+      <div class="src">
+        <h4 class="subheader">Edit PDO</h4>
+        <textarea id="source">
+        </textarea>
+      </div>
+      <div class="dst">
+        <h4 class="subheader">Result</h4>
+        <!-- TODO: change to something else -->
+        <div id="result"></textarea>
+      </div>
     </div>
     <script src="index.js" type="text/javascript"></script>
   </body>
