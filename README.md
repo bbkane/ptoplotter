@@ -7,15 +7,22 @@ https://codemirror.net/doc/manual.html
 - https://cdn.plot.ly/plotly-1.31.2.min.js
 - https://plot.ly/javascript/
 
-TODO:
-- write get_third_party.sh
+## NODEify!
+
+- minify JS
+- Use typescript :)
+- Use npm to get dependencies
+
+I think I'm going to use a combination of https://medium.com/the-node-js-collection/modern-javascript-explained-for-dinosaurs-f695e9747b70 and https://webpack.js.org/guides/getting-started/ to do this. To fix the fact that webpack doesn't seem to like index.html files and I want to be able to gitignore the dist/ folder, I'll try https://stackoverflow.com/a/33374807/2958070 to copy it over. By the time I'm done I should have npm scripts  to auto-rebuild, transpile, and minify with webpacks server plugin thingie.
+
+
+## TODO:
 - make "today" variable
 - Add Load/Save
 - Add sliding areas
 - Add multiple changing traces?
-- minify JS
-- Use typescript :)
 - Add title
 - Add better CSS
 - The one_day_changes seem to be off by one
 - If a change happens on a holiday, then PDO isn't counted off. Make sure to account for this
+
