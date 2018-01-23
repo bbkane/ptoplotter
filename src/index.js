@@ -1,3 +1,11 @@
+// https://discuss.codemirror.net/t/cannot-get-codemirror-to-work-when-using-require/763/5
+require("codemirror/mode/yaml/yaml");
+var CodeMirror = require("codemirror");
+
+var jsyaml = require('js-yaml');
+
+var Plotly = require('plotly.js')
+
 // https://stackoverflow.com/a/17727953/2958070
 function daysBetween(start_date, end_date) {
   start_utc = Date.UTC(start_date.getFullYear(), start_date.getMonth(), start_date.getDate())

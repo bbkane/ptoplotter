@@ -11,10 +11,17 @@ https://codemirror.net/doc/manual.html
 
 - minify JS
 - Use typescript :)
-- Use npm to get dependencies
+- Add npm scripts
+- add webpack-dev-server
 
 I think I'm going to use a combination of https://medium.com/the-node-js-collection/modern-javascript-explained-for-dinosaurs-f695e9747b70 and https://webpack.js.org/guides/getting-started/ to do this. To fix the fact that webpack doesn't seem to like index.html files and I want to be able to gitignore the dist/ folder, I'll try https://stackoverflow.com/a/33374807/2958070 to copy it over. By the time I'm done I should have npm scripts  to auto-rebuild, transpile, and minify with webpacks server plugin thingie.
 
+## Notes
+
+cp src/index.html src/index.css src/codemirror.css dist/
+npx webpack --config webpack.config.js
+
+https://github.com/plotly/plotly.js/blob/master/README.md#building-plotlyjs-with-webpack
 
 ## TODO:
 - make "today" variable

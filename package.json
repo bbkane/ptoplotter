@@ -1,0 +1,20 @@
+{
+  "name": "ptoplotter",
+  "version": "1.0.0",
+  "description": "tmp",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "codemirror": "^5.33.0",
+    "ify-loader": "^1.1.0",
+    "js-yaml": "^3.10.0",
+    "plotly.js": "^1.33.0"
+  },
+  "devDependencies": {
+    "webpack": "^3.10.0"
+  }
+}
