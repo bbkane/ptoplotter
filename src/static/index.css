@@ -1,0 +1,51 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0 30px;
+    padding-bottom: 125px;
+    overflow-x: hidden;
+}
+
+.header {
+    padding: 1px 0 30px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.content {
+    height: 100%;
+}
+
+.src, .dst {
+    position: relative;
+    float: left;
+    height: 100%;
+}
+
+.src {
+    width: 30%;
+}
+
+.dst {
+    width: 67%;
+    float: right;
+}
+.subheader {
+    position: absolute;
+    top: -35px;
+    width: 100%;
+}
+
+.src .CodeMirror {
+    background-color: white;
+    border: 1px solid #888888;
+    border-radius: 3px;
+    box-shadow: 0 0 3px #cccccc inset;
+}
+
+.CodeMirror {
+    height: 100%;
+    font-size: 13px;
+}

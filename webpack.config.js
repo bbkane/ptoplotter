@@ -1,6 +1,13 @@
 const path = require('path');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
+  // https://stackoverflow.com/a/33374807/2958070
+  plugins: [
+    new CopyWebpackPlugin([
+      { from: 'src/static' }
+    ])
+  ],
   // From the README
   module: {
     loaders: [
