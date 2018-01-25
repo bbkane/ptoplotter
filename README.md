@@ -11,8 +11,6 @@ https://codemirror.net/doc/manual.html
 
 - minify JS
 - Use typescript :)
-- Add npm scripts
-- add webpack-dev-server
 
 I think I'm going to use a combination of
 https://medium.com/the-node-js-collection/modern-javascript-explained-for-dinosaurs-f695e9747b70
@@ -24,7 +22,8 @@ webpacks server plugin thingie.
 
 ```bash
 npm install
-npx webpack --config webpack.config.js
+npm run build  # for a one-time build
+npm run server  # for a hot-reloading server
 ```
 
 https://github.com/plotly/plotly.js/blob/master/README.md#building-plotlyjs-with-webpack

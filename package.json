@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "tmp",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bbkane/ptoplotter.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config webpack.config.js --progress",
