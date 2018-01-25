@@ -1,9 +1,7 @@
 // https://discuss.codemirror.net/t/cannot-get-codemirror-to-work-when-using-require/763/5
 require("codemirror/mode/yaml/yaml");
 var CodeMirror = require("codemirror");
-
 var jsyaml = require('js-yaml');
-
 var Plotly = require('plotly.js')
 
 // https://stackoverflow.com/a/17727953/2958070
