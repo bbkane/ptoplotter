@@ -23,7 +23,7 @@ webpacks server plugin thingie.
 ```bash
 npm install
 npm run build  # for a one-time build
-npm run server  # for a hot-reloading server
+npm run start  # for a hot-reloading server
 ```
 
 https://github.com/plotly/plotly.js/blob/master/README.md#building-plotlyjs-with-webpack
