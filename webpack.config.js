@@ -17,9 +17,19 @@ module.exports = {
         test: /\.js$/,
         loader: 'ify-loader'
       }
+    ],
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/
+      }
     ]
   },
-  entry: './src/index.js',
+  resolve: {
+    extensions: [ '.tsx', '.ts', '.js' ]
+  },
+  entry: './src/index.ts',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')

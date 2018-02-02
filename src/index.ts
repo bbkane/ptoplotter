@@ -6,8 +6,8 @@ var Plotly = require('./custom-plotly'); // Holy crap, using a custom plotly mea
 
 // https://stackoverflow.com/a/17727953/2958070
 function daysBetween(start_date, end_date) {
-  start_utc = Date.UTC(start_date.getFullYear(), start_date.getMonth(), start_date.getDate())
-  end_utc = Date.UTC(end_date.getFullYear(), end_date.getMonth(), end_date.getDate())
+  let start_utc = Date.UTC(start_date.getFullYear(), start_date.getMonth(), start_date.getDate())
+  let end_utc = Date.UTC(end_date.getFullYear(), end_date.getMonth(), end_date.getDate())
   return (end_date - start_date) / 86400000;
 }
 
@@ -26,14 +26,14 @@ function addToCorrectMarkerDates(marker_dates, hour_change, date) {
 }
 
 function makeFilledArray(length, value) {
-  arr = Array.apply(null, Array(length)).map(Number.prototype.valueOf, value);
+  let arr = Array.apply(null, Array(length)).map(Number.prototype.valueOf, value);
   return arr
 }
 
 // This takes the code_editor -> JSON
 function docToPlotlyJSON(doc) {
   // Collect all traces (see https://plot.ly/javascript/line-charts/)
-  data = []
+  let data = []
 
   // https://stackoverflow.com/a/10040679/2958070
   let start_date = doc['start_date'];
@@ -43,7 +43,7 @@ function docToPlotlyJSON(doc) {
   // most of these plots are going to share x-axes...
   let days = [];
 
-  ys = []; // This keeps track of the PDO balance per day from start_date to end_date inclusive
+  let ys = []; // This keeps track of the PDO balance per day from start_date to end_date inclusive
   let hours = doc['start_hours'];
 
 
@@ -59,7 +59,7 @@ function docToPlotlyJSON(doc) {
 
   // TODO: make this not O(n(a + b + c + ...))
   for (let d = new Date(start_date); d <= end_date; d.setDate(d.getDate() + 1)) {
-    days.push(new Date(d));
+    days.push(new Date(d.getTime()));
 
     if (has_repeating_changes) {
       for(let obj of doc['repeating_changes']) {
@@ -151,8 +151,8 @@ function docToPlotlyJSON(doc) {
 
 function updateGraph(code_mirror_instance) {
   let doc = jsyaml.safeLoad(code_mirror_instance.getValue());
-  plotlyJSON = docToPlotlyJSON(doc);
-  Plotly.newPlot('result', data);
+  let plotlyJSON = docToPlotlyJSON(doc);
+  Plotly.newPlot('result', plotlyJSON);
 }
 
 const startYAML = `--- # PDO
