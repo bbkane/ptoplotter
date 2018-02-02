@@ -2,7 +2,7 @@
 require("codemirror/mode/yaml/yaml");
 var CodeMirror = require("codemirror");
 var jsyaml = require('js-yaml');
-var Plotly = require('plotly.js')
+var Plotly = require('./custom-plotly'); // Holy crap, using a custom plotly means -4.26MB...
 
 // https://stackoverflow.com/a/17727953/2958070
 function daysBetween(start_date, end_date) {
