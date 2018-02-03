@@ -10,7 +10,6 @@ https://codemirror.net/doc/manual.html
 ## NODEify!
 
 - minify JS
-- Use typescript :)
 
 I think I'm going to use a combination of
 https://medium.com/the-node-js-collection/modern-javascript-explained-for-dinosaurs-f695e9747b70

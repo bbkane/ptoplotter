@@ -5,10 +5,10 @@ var jsyaml = require('js-yaml');
 var Plotly = require('./custom-plotly'); // Holy crap, using a custom plotly means -4.26MB...
 
 // https://stackoverflow.com/a/17727953/2958070
-function daysBetween(start_date, end_date) {
+function daysBetween(start_date: Date, end_date: Date): number {
   let start_utc = Date.UTC(start_date.getFullYear(), start_date.getMonth(), start_date.getDate())
   let end_utc = Date.UTC(end_date.getFullYear(), end_date.getMonth(), end_date.getDate())
-  return (end_date - start_date) / 86400000;
+  return (end_utc - start_utc) / 86400000;
 }
 
 // Needs a {positive: [], neutral: [], negative: []}
@@ -160,36 +160,36 @@ start_date: 2018-01-01
 end_date: 2018-12-31
 start_hours: 40
 hour_markers:
-  - label: 40 hr buffer
-    hours: 40
+- label: 40 hr buffer
+  hours: 40
 repeating_changes:
-  - day_of_month: 15
-    hour_change: 12.67
+- day_of_month: 15
+  hour_change: 12.67
 one_day_changes:
-  # Acxiom holidays
-  - date: 2018-12-25  # Christmas Day
-    hour_change: 0
-  - date: 2018-12-24  # Christmas Eve (Observed)
-    hour_change: 0
-  - date: 2018-11-23  # Day After Thanksgiving
-    hour_change: 0
-  - date: 2018-11-22  # Thanksgiving
-    hour_change: 0
-  - date: 2018-09-03  # Labor Day
-    hour_change: 0
-  - date: 2018-07-04  # Independence Day
-    hour_change: 0
-  - date: 2018-05-28  # Memorial Day
-    hour_change: 0
-  - date: 2018-02-19  # Presidents' Day
-    hour_change: 0
-  - date: 2018-01-01  # New Year's Day (Observed)
-    hour_change: 0
+# Acxiom holidays
+- date: 2018-12-25  # Christmas Day
+  hour_change: 0
+- date: 2018-12-24  # Christmas Eve (Observed)
+  hour_change: 0
+- date: 2018-11-23  # Day After Thanksgiving
+  hour_change: 0
+- date: 2018-11-22  # Thanksgiving
+  hour_change: 0
+- date: 2018-09-03  # Labor Day
+  hour_change: 0
+- date: 2018-07-04  # Independence Day
+  hour_change: 0
+- date: 2018-05-28  # Memorial Day
+  hour_change: 0
+- date: 2018-02-19  # Presidents' Day
+  hour_change: 0
+- date: 2018-01-01  # New Year's Day (Observed)
+  hour_change: 0
 ranged_changes:
-  # Example ranged vacation
-  - start_date: 2018-05-01
-    end_date: 2018-05-08
-    hour_change: 0`;
+# Example ranged vacation
+- start_date: 2018-05-01
+  end_date: 2018-05-08
+  hour_change: 0`;
 
 // https://stackoverflow.com/a/38075603/2958070
 window.addEventListener('load', function() {
