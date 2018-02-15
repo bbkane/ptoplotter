@@ -4,6 +4,10 @@ var CodeMirror = require("codemirror");
 var jsyaml = require('js-yaml');
 var Plotly = require('./custom-plotly'); // Holy crap, using a custom plotly means -4.26MB...
 
+import * as editorInfo from "./editorInfo";
+import * as plotInfo from './plotInfo';
+
+
 // https://stackoverflow.com/a/17727953/2958070
 function daysBetween(start_date: Date, end_date: Date): number {
   let start_utc = Date.UTC(start_date.getFullYear(), start_date.getMonth(), start_date.getDate())
@@ -150,8 +154,9 @@ function docToPlotlyJSON(doc) {
 }
 
 function updateGraph(code_mirror_instance) {
-  let doc = jsyaml.safeLoad(code_mirror_instance.getValue());
+  let doc: editorInfo.EditorInfo = jsyaml.safeLoad(code_mirror_instance.getValue());
   let plotlyJSON = docToPlotlyJSON(doc);
+  // console.log(plotlyJSON);
   Plotly.newPlot('result', plotlyJSON);
 }
 
