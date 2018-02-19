@@ -2,9 +2,8 @@
   "compilerOptions": {
     "outDir": "./dist/",
     "noImplicitAny": false, // TODO: this should be true
-    "module": "es6",
+    "module": "commonjs", // needed for mocha
     "target": "es5",
-    "jsx": "react",
     "allowJs": true
   }
 }
