@@ -8,6 +8,7 @@ import * as ptolib from './ptolib';
 
 function updateGraph(code_mirror_instance) {
   let doc: ptolib.EditorInfo = jsyaml.safeLoad(code_mirror_instance.getValue());
+  // let plotlyJSON: ptolib.Plot[] = ptolib.docToPlotlyJSON(doc);
   let plotlyJSON: ptolib.Plot[] = ptolib.docToPlotlyJSONOld(doc);
   // console.log(plotlyJSON);
   Plotly.newPlot('result', plotlyJSON);

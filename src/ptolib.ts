@@ -85,14 +85,104 @@ export function makeSequentialDateArray(startDate: Date, endDate: Date): Date[] 
     return days;
 }
 
+
+function isWeekDay(date: Date): boolean {
+    return date.getDay() >= 1 && date.getDay() <= 6
+}
+
+// TODO: there are major parts of this not working...
+// all sorts of changes...
+// probably add some tests before doing any more
 export function docToPlotlyJSON(doc: EditorInfo): Plot[] {
     // make the days
-    let startDate: Date = doc.start_date;
-    let endDate: Date = doc.end_date;
-    let daysBetween: number = getDaysBetween(startDate, endDate);
+    const startDate: Date = doc.start_date;
+    const endDate: Date = doc.end_date;
+    const daysBetween: number = getDaysBetween(startDate, endDate);
+    const startHours = doc.start_hours;
 
-    // TODO: finish
-    return [];
+    const allDays: Date[] = makeSequentialDateArray(startDate, endDate);
+
+    let ptoBalanceHours: number[] = [];
+    let positiveMarkers: Date[] = [];
+    let zeroMarkers: Date[] = [];
+    let negativeMarkers: Date[] = [];
+
+    // TODO: try hash map approach instead of loops...
+
+    let currentPtoBalance: number = doc.start_hours;
+    for (let currentDay of allDays) {
+
+        // zero has a special meaning here. Using a sentinal...
+        let repeatingChangeDelta: number = NaN;
+        let oneDayChangeDelta: number = NaN;
+        let rangedChangeDelta: number = NaN;
+
+        // only count Monday-Friday (TODO: make this a flag in the input somewhere?)
+        for (let rangedChange of doc.ranged_changes) {
+            if (isWeekDay(currentDay)) {
+                if (currentDay.getTime() >= rangedChange.start_date.getTime() &&
+                        currentDay.getTime() <= rangedChange.end_date.getTime()) {
+                    rangedChangeDelta = rangedChange.hour_change;
+                    }
+            }
+        }
+
+        for (let repeatingChange of doc.repeating_changes) {
+            if (currentDay.getDate() == repeatingChange.day_of_month) {
+                repeatingChangeDelta = repeatingChange.hour_change;
+            }
+        }
+
+        for (let oneDayChange of doc.one_day_changes) {
+            if (currentDay.getTime() == oneDayChange.date.getTime()) {
+                oneDayChangeDelta = oneDayChange.hour_change;
+            }
+        }
+
+        // So, I should have all possible deltas for each day.
+        // Merge them with the following rules:
+        // deltas > 0 are always applied
+        // deltas < 0 are only applied if a delta == 0 not found (0 is a sentinal for holiday on the company, so don't take time off on it)
+        // Don't take more than 8 hours a day off ( min(delta) == -8)
+        // deltas that are isNan are ignored (nothing happened)
+
+        // TODO: unroll this loop for speed and maybe readability?
+        let deltas: number[] = [repeatingChangeDelta, oneDayChangeDelta, rangedChangeDelta];
+        let mergedDelta: number = 0
+        // no change (common case)
+        if (deltas.every(isNaN)) {
+            ptoBalanceHours.push(currentPtoBalance);
+            continue;
+        }
+
+        // Note: NaN compares false to <, > , ==
+        for (let delta of deltas) {
+            if (delta > 0) {
+                mergedDelta += delta;
+            }
+            if (rangedChangeDelta != 0 && oneDayChangeDelta != 0 && repeatingChangeDelta != 0) {
+                if (delta < 0) {
+                    mergedDelta -= delta;
+                }
+            }
+        }
+
+        if (mergedDelta < -8) {
+            mergedDelta = -8;
+        }
+        currentPtoBalance += mergedDelta;
+        ptoBalanceHours.push(currentPtoBalance);
+    }
+
+    let data: Plot[] = [];
+    data.push({
+        x: allDays,
+        y: ptoBalanceHours,
+        mode: PlotMode.scatter,
+        name: 'PTO'
+    });
+
+    return data;
 }
 
 // This takes the code_editor -> JSON
