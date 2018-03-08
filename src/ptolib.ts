@@ -1,3 +1,5 @@
+import { randomBytes } from "crypto";
+
 // Generated from https://app.quicktype.io/
 // then modified to support Dates instead of strings
 
@@ -90,6 +92,43 @@ function isWeekDay(date: Date): boolean {
     return date.getDay() >= 1 && date.getDay() <= 6
 }
 
+
+export function normalizeDeltas(repeatingChangeDelta: number, oneDayChangeDelta: number, rangedChangeDelta: number): number {
+        // So, I should have all possible deltas for each day.
+        // Merge them with the following rules:
+        // deltas > 0 are always applied
+        // deltas < 0 are only applied if a delta == 0 not found (0 is a sentinal for holiday on the company, so don't take time off on it)
+        // Don't take more than 8 hours a day off ( min(delta) == -8)
+        // deltas that are isNan are ignored (nothing happened)
+
+        // TODO: unroll this loop for speed and maybe readability?
+        let deltas: number[] = [repeatingChangeDelta, oneDayChangeDelta, rangedChangeDelta];
+
+        // no change (common case)
+        if (deltas.every(isNaN)) {
+            return 0;
+        }
+
+        let hasZeroDelta = deltas.some(num => num == 0);
+
+        let mergedDelta = 0;
+        // Note: NaN compares false to <, > , ==
+        for (let delta of deltas) {
+            if (delta > 0) {
+                mergedDelta += delta;
+            } else if (delta < 0 && !hasZeroDelta) {
+                // NOTE: it's already negative, no need to subtract!
+                mergedDelta = mergedDelta + delta;
+            }
+        }
+
+        if (mergedDelta < -8) {
+            mergedDelta = -8;
+        }
+        return mergedDelta;
+}
+
+
 // TODO: there are major parts of this not working...
 // all sorts of changes...
 // probably add some tests before doing any more
@@ -139,38 +178,7 @@ export function docToPlotlyJSON(doc: EditorInfo): Plot[] {
             }
         }
 
-        // So, I should have all possible deltas for each day.
-        // Merge them with the following rules:
-        // deltas > 0 are always applied
-        // deltas < 0 are only applied if a delta == 0 not found (0 is a sentinal for holiday on the company, so don't take time off on it)
-        // Don't take more than 8 hours a day off ( min(delta) == -8)
-        // deltas that are isNan are ignored (nothing happened)
-
-        // TODO: unroll this loop for speed and maybe readability?
-        let deltas: number[] = [repeatingChangeDelta, oneDayChangeDelta, rangedChangeDelta];
-        let mergedDelta: number = 0
-        // no change (common case)
-        if (deltas.every(isNaN)) {
-            ptoBalanceHours.push(currentPtoBalance);
-            continue;
-        }
-
-        // Note: NaN compares false to <, > , ==
-        for (let delta of deltas) {
-            if (delta > 0) {
-                mergedDelta += delta;
-            }
-            if (rangedChangeDelta != 0 && oneDayChangeDelta != 0 && repeatingChangeDelta != 0) {
-                if (delta < 0) {
-                    mergedDelta -= delta;
-                }
-            }
-        }
-
-        if (mergedDelta < -8) {
-            mergedDelta = -8;
-        }
-        currentPtoBalance += mergedDelta;
+        currentPtoBalance += normalizeDeltas(repeatingChangeDelta, oneDayChangeDelta, rangedChangeDelta)
         ptoBalanceHours.push(currentPtoBalance);
     }
 
