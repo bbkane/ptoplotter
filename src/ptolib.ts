@@ -150,6 +150,7 @@ export function docToPlotlyJSON(doc: EditorInfo): Plot[] {
 
     // TODO: try hash map approach instead of loops...
 
+    console.log('Starting:', new Date());
     let currentPtoBalance: number = doc.start_hours;
     for (let currentDay of allDays) {
 
@@ -175,12 +176,23 @@ export function docToPlotlyJSON(doc: EditorInfo): Plot[] {
         }
 
         for (let oneDayChange of doc.one_day_changes) {
+            // TODO: getTime isn't a function?
             if (currentDay.getTime() == oneDayChange.date.getTime()) {
                 oneDayChangeDelta = oneDayChange.hour_change;
             }
         }
 
-        currentPtoBalance += normalizeDeltas(repeatingChangeDelta, oneDayChangeDelta, rangedChangeDelta)
+        let normalizedDelta = normalizeDeltas(repeatingChangeDelta, oneDayChangeDelta, rangedChangeDelta);
+
+        if ( !(isNaN(repeatingChangeDelta) && isNaN(oneDayChangeDelta) && isNaN(rangedChangeDelta)) ) {
+            console.log(
+                currentDay,
+                'repeatingChangeDelta:', repeatingChangeDelta,
+                'oneDayChangeDelta:', oneDayChangeDelta,
+                'rangedChangeDelta:', rangedChangeDelta,
+                'normalizedDelta:', normalizedDelta);
+        }
+        currentPtoBalance += normalizedDelta;
         ptoBalanceHours.push(currentPtoBalance);
     }
 

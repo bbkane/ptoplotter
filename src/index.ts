@@ -26,23 +26,23 @@ repeating_changes:
   hour_change: 12.67
 one_day_changes:
 # Acxiom holidays
-- date: 2018-12-25  # Christmas Day
-  hour_change: 0
-- date: 2018-12-24  # Christmas Eve (Observed)
-  hour_change: 0
-- date: 2018-11-23  # Day After Thanksgiving
-  hour_change: 0
-- date: 2018-11-22  # Thanksgiving
-  hour_change: 0
-- date: 2018-09-03  # Labor Day
-  hour_change: 0
-- date: 2018-07-04  # Independence Day
-  hour_change: 0
-- date: 2018-05-28  # Memorial Day
+- date: 2018-01-01  # New Year's Day (Observed)
   hour_change: 0
 - date: 2018-02-19  # Presidents' Day
   hour_change: 0
-- date: 2018-01-01  # New Year's Day (Observed)
+- date: 2018-05-28  # Memorial Day
+  hour_change: 0
+- date: 2018-07-04  # Independence Day
+  hour_change: 0
+- date: 2018-09-03  # Labor Day
+  hour_change: 0
+- date: 2018-11-22  # Thanksgiving
+  hour_change: 0
+- date: 2018-11-23  # Day After Thanksgiving
+  hour_change: 0
+- date: 2018-12-24  # Christmas Eve (Observed)
+  hour_change: 0
+- date: 2018-12-25  # Christmas Day
   hour_change: 0
 ranged_changes:
 # Example ranged vacation

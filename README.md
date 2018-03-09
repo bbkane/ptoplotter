@@ -34,6 +34,6 @@ https://github.com/plotly/plotly.js/blob/master/README.md#building-plotlyjs-with
 - Add multiple changing traces?
 - Add title
 - Add better CSS
-- The one_day_changes seem to be off by one
-- If a change happens on a holiday, then PDO isn't counted off. Make sure to account for this
+- The one_day_changes seem to be off by one (see the logs for repeating changes...)
+- Add tests!
 
