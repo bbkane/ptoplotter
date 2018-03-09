@@ -111,21 +111,23 @@ export function normalizeDeltas(repeatingChangeDelta: number, oneDayChangeDelta:
 
         let hasZeroDelta = deltas.some(num => num == 0);
 
-        let mergedDelta = 0;
+        let positiveDelta = 0;
+        let negativeDelta = 0;
         // Note: NaN compares false to <, > , ==
         for (let delta of deltas) {
             if (delta > 0) {
-                mergedDelta += delta;
+                positiveDelta += delta;
             } else if (delta < 0 && !hasZeroDelta) {
                 // NOTE: it's already negative, no need to subtract!
-                mergedDelta = mergedDelta + delta;
+               negativeDelta += delta;
             }
         }
 
-        if (mergedDelta < -8) {
-            mergedDelta = -8;
+        if (negativeDelta < -8) {
+            negativeDelta = -8;
         }
-        return mergedDelta;
+        // NOTE: it's already negative, no need to subtract!
+        return positiveDelta + negativeDelta;
 }
 
 

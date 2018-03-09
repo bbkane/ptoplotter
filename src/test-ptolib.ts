@@ -40,8 +40,8 @@ describe('normalizeDeltas', () => {
         new TestCase('blah', [NaN, -8, 12.5], 4.5),
         new TestCase('blah', [0, NaN, -5], 0),
         new TestCase('delta always <= -8', [-9, NaN, -6], -8),
-        // even when a delta > 0
-        new TestCase('don\'t take more than 8 hours off', [12, -8, -8], 4),
+        new TestCase('min negativeDelta == -8', [12, -8, -8], 4),
+        new TestCase('all 0\'s', [0, 0, 0], 0),
     ];
 
     for (let testCase of testCases) {
