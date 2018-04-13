@@ -53,6 +53,14 @@ export interface Plot {
     marker?: Marker
 }
 
+export interface DebugDeltas {
+    currentDay: Date,
+    repeatingChangeDelta: number,
+    oneDayChangeDelta: number,
+    rangedChangeDelta: number,
+    normalizeDelta: number
+}
+
 // https://stackoverflow.com/a/17727953/2958070
 function getDaysBetween(start_date: Date, end_date: Date): number {
     let start_utc = Date.UTC(start_date.getFullYear(), start_date.getMonth(), start_date.getDate())
@@ -150,6 +158,7 @@ export function docToPlotlyJSON(doc: EditorInfo): Plot[] {
 
     // TODO: try hash map approach instead of loops...
 
+    let debugValues: DebugDeltas[] = [];
     console.log('Starting:', new Date());
     let currentPtoBalance: number = doc.start_hours;
     for (let currentDay of allDays) {
@@ -185,16 +194,19 @@ export function docToPlotlyJSON(doc: EditorInfo): Plot[] {
         let normalizedDelta = normalizeDeltas(repeatingChangeDelta, oneDayChangeDelta, rangedChangeDelta);
 
         if ( !(isNaN(repeatingChangeDelta) && isNaN(oneDayChangeDelta) && isNaN(rangedChangeDelta)) ) {
-            console.log(
-                currentDay,
-                'repeatingChangeDelta:', repeatingChangeDelta,
-                'oneDayChangeDelta:', oneDayChangeDelta,
-                'rangedChangeDelta:', rangedChangeDelta,
-                'normalizedDelta:', normalizedDelta);
+            debugValues.push({
+                currentDay: currentDay,
+                repeatingChangeDelta: repeatingChangeDelta,
+                oneDayChangeDelta: oneDayChangeDelta,
+                rangedChangeDelta: rangedChangeDelta,
+                normalizeDelta: normalizedDelta
+            });
         }
         currentPtoBalance += normalizedDelta;
         ptoBalanceHours.push(currentPtoBalance);
     }
+
+    console.table(debugValues);
 
     let data: Plot[] = [];
     data.push({
