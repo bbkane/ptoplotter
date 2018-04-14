@@ -61,32 +61,6 @@ export interface DebugDeltas {
     normalizeDelta: number
 }
 
-// https://stackoverflow.com/a/17727953/2958070
-function getDaysBetween(start_date: Date, end_date: Date): number {
-    let start_utc = Date.UTC(start_date.getFullYear(), start_date.getMonth(), start_date.getDate())
-    let end_utc = Date.UTC(end_date.getFullYear(), end_date.getMonth(), end_date.getDate())
-    return (end_utc - start_utc) / 86400000;
-}
-
-// Needs a {positive: [], neutral: [], negative: []}
-// an int
-// and a date (This function will copy the date if necessary)
-function addToCorrectMarkerDates(marker_dates, hour_change, date) {
-    let change = 'positive';
-    if (hour_change < 0) {
-        change = 'negative';
-    }
-    if (hour_change === 0) {
-        change = 'neutral';
-    }
-    marker_dates[change].push(new Date(date));
-}
-
-function makeFilledArray(length, value) {
-    let arr = Array.apply(null, Array(length)).map(Number.prototype.valueOf, value);
-    return arr
-}
-
 export function makeSequentialDateArray(startDate: Date, endDate: Date): Date[] {
     let days: Date[] = [];
     for (let d = new Date(startDate.getTime()); d <= endDate; d.setDate(d.getDate() + 1)) {
@@ -142,25 +116,11 @@ export function normalizeDeltas(repeatingChangeDelta: number, oneDayChangeDelta:
 // TODO: there are major parts of this not working...
 // all sorts of changes...
 // probably add some tests before doing any more
-export function docToPlotlyJSON(doc: EditorInfo): Plot[] {
-    // make the days
-    const startDate: Date = doc.start_date;
-    const endDate: Date = doc.end_date;
-    const daysBetween: number = getDaysBetween(startDate, endDate);
-    const startHours = doc.start_hours;
+export function docToInterestingDates(doc: EditorInfo, allDays: Date[]): Map<Date, number> {
 
-    const allDays: Date[] = makeSequentialDateArray(startDate, endDate);
+    // NOTE: Maps are only in es6.
+    let interestingDates = new Map<Date, number>();
 
-    let ptoBalanceHours: number[] = [];
-    let positiveMarkers: Date[] = [];
-    let zeroMarkers: Date[] = [];
-    let negativeMarkers: Date[] = [];
-
-    // TODO: try hash map approach instead of loops...
-
-    let debugValues: DebugDeltas[] = [];
-    console.log('Starting:', new Date());
-    let currentPtoBalance: number = doc.start_hours;
     for (let currentDay of allDays) {
 
         // zero has a special meaning here. Using a sentinal...
@@ -193,30 +153,61 @@ export function docToPlotlyJSON(doc: EditorInfo): Plot[] {
 
         let normalizedDelta = normalizeDeltas(repeatingChangeDelta, oneDayChangeDelta, rangedChangeDelta);
 
-        if ( !(isNaN(repeatingChangeDelta) && isNaN(oneDayChangeDelta) && isNaN(rangedChangeDelta)) ) {
-            debugValues.push({
-                currentDay: currentDay,
-                repeatingChangeDelta: repeatingChangeDelta,
-                oneDayChangeDelta: oneDayChangeDelta,
-                rangedChangeDelta: rangedChangeDelta,
-                normalizeDelta: normalizedDelta
-            });
+        if (normalizedDelta != 0) {
+            interestingDates.set(currentDay, normalizedDelta);
         }
-        currentPtoBalance += normalizedDelta;
-        ptoBalanceHours.push(currentPtoBalance);
+    }
+    return interestingDates;
+}
+
+
+export function makePlots(doc: EditorInfo, allDays: Date[], interestingDates: Map<Date, number>): Plot[] {
+    let balance = doc.start_hours;
+    let balances : number[] = [];
+    for (let currentDay of allDays) {
+        if (interestingDates.has(currentDay)) {
+            balance += interestingDates.get(currentDay);
+        }
+        balances.push(balance)
     }
 
-    console.table(debugValues);
-
-    let data: Plot[] = [];
-    data.push({
+    let plots: Plot[] = []
+    plots.push({
         x: allDays,
-        y: ptoBalanceHours,
+        y: balances,
         mode: PlotMode.scatter,
-        name: 'PTO'
+        name: "PTO"
     });
 
-    return data;
+    return plots;
+}
+
+// OLD STUFF
+
+function makeFilledArray(length, value) {
+    let arr = Array.apply(null, Array(length)).map(Number.prototype.valueOf, value);
+    return arr
+}
+
+// https://stackoverflow.com/a/17727953/2958070
+function getDaysBetween(start_date: Date, end_date: Date): number {
+    let start_utc = Date.UTC(start_date.getFullYear(), start_date.getMonth(), start_date.getDate())
+    let end_utc = Date.UTC(end_date.getFullYear(), end_date.getMonth(), end_date.getDate())
+    return (end_utc - start_utc) / 86400000;
+}
+
+// Needs a {positive: [], neutral: [], negative: []}
+// an int
+// and a date (This function will copy the date if necessary)
+function addToCorrectMarkerDates(marker_dates, hour_change, date) {
+    let change = 'positive';
+    if (hour_change < 0) {
+        change = 'negative';
+    }
+    if (hour_change === 0) {
+        change = 'neutral';
+    }
+    marker_dates[change].push(new Date(date));
 }
 
 // This takes the code_editor -> JSON

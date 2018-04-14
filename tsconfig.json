@@ -3,7 +3,7 @@
     "outDir": "./dist/",
     "noImplicitAny": false, // TODO: this should be true
     "module": "commonjs", // needed for mocha
-    "target": "es5",
+    "target": "es6",
     "allowJs": true
   }
 }
