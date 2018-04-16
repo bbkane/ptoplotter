@@ -162,21 +162,54 @@ export function docToInterestingDates(doc: EditorInfo, allDays: Date[]): Map<Dat
 
 
 export function makePlots(doc: EditorInfo, allDays: Date[], interestingDates: Map<Date, number>): Plot[] {
-    let balance = doc.start_hours;
     let balances : number[] = [];
+    let positiveDays: Date[] = [];
+    let negativeDays: Date[] = [];
+    // NOTE: I think I'm going to change around the holidays
+    // instead of screwing around with sentinals
+    let balance = doc.start_hours;
+
     for (let currentDay of allDays) {
         if (interestingDates.has(currentDay)) {
-            balance += interestingDates.get(currentDay);
+            let delta = interestingDates.get(currentDay);
+            balance += delta;
+
+            if (delta > 0) {
+                positiveDays.push(currentDay);
+            } else if (delta < 0) {
+                negativeDays.push(currentDay);
+            }
         }
         balances.push(balance)
     }
 
-    let plots: Plot[] = []
+    let plots: Plot[] = [];
+
     plots.push({
         x: allDays,
         y: balances,
         mode: PlotMode.scatter,
         name: "PTO"
+    });
+
+    plots.push({
+        x: positiveDays,
+        y: makeFilledArray(positiveDays.length, 0),
+        mode: PlotMode.markers,
+        name: "gains",
+        marker: {
+            color: 'green'
+        }
+    });
+
+    plots.push({
+        x: negativeDays,
+        y: makeFilledArray(negativeDays.length, 0),
+        mode: PlotMode.markers,
+        name: "losses",
+        marker: {
+            color: 'red'
+        }
     });
 
     return plots;
