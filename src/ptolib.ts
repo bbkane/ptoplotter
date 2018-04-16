@@ -212,6 +212,15 @@ export function makePlots(doc: EditorInfo, allDays: Date[], interestingDates: Ma
         }
     });
 
+    for (let hourMarker of doc.hour_markers) {
+        plots.push({
+            x: [doc.start_date, doc.end_date],
+            y: [hourMarker.hours, hourMarker.hours],
+            mode: PlotMode.scatter,
+            name: hourMarker.label
+        });
+    }
+
     return plots;
 }
 
