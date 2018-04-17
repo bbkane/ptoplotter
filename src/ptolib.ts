@@ -4,11 +4,11 @@ import { randomBytes } from "crypto";
 // then modified to support Dates instead of strings
 
 export interface EditorInfo {
-    start_date:        Date;
+    start_date?:       Date;  // if this isn't here, assume it's today
     end_date:          Date;
     start_hours:       number;
     hour_markers:      HourMarker[];
-    holidays: Date[]
+    holidays: Date[];
     repeating_changes: RepeatingChange[];
     one_day_changes:   OneDayChange[];
     ranged_changes:    RangedChange[];
@@ -54,14 +54,6 @@ export interface Plot {
     marker?: Marker
 }
 
-export interface DebugDeltas {
-    currentDay: Date,
-    repeatingChangeDelta: number,
-    oneDayChangeDelta: number,
-    rangedChangeDelta: number,
-    normalizeDelta: number
-}
-
 export function makeSequentialDateArray(startDate: Date, endDate: Date): Date[] {
     let days: Date[] = [];
     for (let d = new Date(startDate.getTime()); d <= endDate; d.setDate(d.getDate() + 1)) {
@@ -86,11 +78,11 @@ function hasDate(arr: Date[], dt: Date): boolean {
 }
 
 // TODO max hours off and holidays should be configurable!
-export function normalizeDeltas(holidays: Date[], currentDay: Date, repeatingChangeDelta: number, oneDayChangeDelta: number, rangedChangeDelta: number): number {
+export function normalizeDeltas(holidays: Date[], currentDay: Date, deltas: number[]): number {
     // Always apply positive changes
     // Only apply a negative change if it's not a weekend or holiday
     // Take max -8 negative hours
-    let deltas: number[] = [repeatingChangeDelta, oneDayChangeDelta, rangedChangeDelta];
+    // let deltas: number[] = [repeatingChangeDelta, oneDayChangeDelta, rangedChangeDelta];
 
     if (deltas.every(x => x == 0)) {
         return 0;
@@ -124,33 +116,34 @@ export function docToInterestingDates(doc: EditorInfo, allDays: Date[]): Map<Dat
 
     for (let currentDay of allDays) {
 
-        let repeatingChangeDelta: number = 0;
-        let oneDayChangeDelta: number = 0;
-        let rangedChangeDelta: number = 0;
+        let deltas: number[] = []
 
         // only count Monday-Friday (TODO: make this a flag in the input somewhere?)
         for (let rangedChange of doc.ranged_changes) {
             if (currentDay.getTime() >= rangedChange.start_date.getTime() &&
                     currentDay.getTime() <= rangedChange.end_date.getTime()) {
-                rangedChangeDelta = rangedChange.hour_change;
+                deltas.push(rangedChange.hour_change);
+                break; // assume there's only one ranged change there
             }
         }
 
         for (let repeatingChange of doc.repeating_changes) {
             if (currentDay.getDate() == repeatingChange.day_of_month) {
-                repeatingChangeDelta = repeatingChange.hour_change;
+                deltas.push(repeatingChange.hour_change);
+                break;
             }
         }
 
         for (let oneDayChange of doc.one_day_changes) {
             // TODO: getTime isn't a function?
             if (currentDay.getTime() == oneDayChange.date.getTime()) {
-                oneDayChangeDelta = oneDayChange.hour_change;
+                deltas.push(oneDayChange.hour_change);
+                break;
             }
         }
 
         // TODO: make this just mutate a map passed in instead of returning..
-        let normalizedDelta = normalizeDeltas(doc.holidays, currentDay, repeatingChangeDelta, oneDayChangeDelta, rangedChangeDelta);
+        let normalizedDelta = normalizeDeltas(doc.holidays, currentDay, deltas);
 
         if (normalizedDelta != 0) {
             interestingDates.set(currentDay, normalizedDelta);
@@ -208,6 +201,16 @@ export function makePlots(doc: EditorInfo, allDays: Date[], interestingDates: Ma
         name: "losses",
         marker: {
             color: 'red'
+        }
+    });
+
+    plots.push({
+        x: doc.holidays,
+        y: makeFilledArray(doc.holidays.length, 0),
+        mode: PlotMode.markers,
+        name: "holidays",
+        marker: {
+            color: 'blue'
         }
     });
 

@@ -28,12 +28,12 @@ npm run start  # for a hot-reloading server
 https://github.com/plotly/plotly.js/blob/master/README.md#building-plotlyjs-with-webpack
 
 ## TODO:
-- make "today" variable
 - Add Load/Save
 - Add sliding areas
-- Add multiple changing traces?
 - Add title
 - Add better CSS
-- The one_day_changes seem to be off by one (see the logs for repeating changes...)
 - Add tests!
-
+- add my name at the bottom (and a link to github)
+- copy tensorflow.org's deploy method
+- filter out holidays before start_date
+- grep -i todo .

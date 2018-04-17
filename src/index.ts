@@ -8,10 +8,16 @@ import * as ptolib from './ptolib';
 
 function updateGraph(code_mirror_instance) {
   let doc: ptolib.EditorInfo = jsyaml.safeLoad(code_mirror_instance.getValue());
-  console.log(doc);
+  // If there's no start date, use today
+  if (!doc.start_date) {
+    doc.start_date = new Date();
+    // zero out hours, min, ...
+    doc.start_date.setHours(0, 0, 0, 0);
+  }
+  // console.log(doc);
   const allDays: Date[] = ptolib.makeSequentialDateArray(doc.start_date, doc.end_date);
   let interestingDates: Map<Date, number> = ptolib.docToInterestingDates(doc, allDays);
-  console.table(interestingDates);
+  // console.table(interestingDates);
   let plotlyJSON: ptolib.Plot[] = ptolib.makePlots(doc, allDays, interestingDates);
   // let plotlyJSON: ptolib.Plot[] = ptolib.docToPlotlyJSONOld(doc);
   // console.log(plotlyJSON);
@@ -19,7 +25,7 @@ function updateGraph(code_mirror_instance) {
 }
 
 const startYAML = `--- # PDO
-start_date: 2018-01-01
+start_date: 2018-01-01 # remove this line to start from today
 end_date: 2018-12-31
 start_hours: 40
 hour_markers:
