@@ -2,6 +2,7 @@
   "name": "ptoplotter",
   "version": "1.0.0",
   "description": "tmp",
+  "homepage": "https://bbkane.github.io/ptoplotter/",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -11,7 +12,9 @@
     "test": "mocha -r ts-node/register src/**/test-*.ts",
     "build": "webpack --config webpack.config.js --progress",
     "start": "webpack-dev-server --open",
-    "prod-build": "NODE_ENV=production webpack --config webpack.config.js --progress"
+    "prod-build": "NODE_ENV=production webpack --config webpack.config.js --progress",
+    "predeploy": "npm run prod-build",
+    "deploy": "gh-pages -d dist"
   },
   "author": "",
   "license": "ISC",
@@ -27,6 +30,7 @@
     "@types/node": "^9.4.6",
     "chai": "^4.1.2",
     "copy-webpack-plugin": "^4.4.1",
+    "gh-pages": "^1.1.0",
     "mocha": "^5.0.1",
     "ts-loader": "^3.5.0",
     "ts-node": "^4.1.0",
