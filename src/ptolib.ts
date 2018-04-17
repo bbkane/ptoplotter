@@ -8,6 +8,7 @@ export interface EditorInfo {
     end_date:          Date;
     start_hours:       number;
     hour_markers:      HourMarker[];
+    holidays: Date[]
     repeating_changes: RepeatingChange[];
     one_day_changes:   OneDayChange[];
     ranged_changes:    RangedChange[];
@@ -69,49 +70,49 @@ export function makeSequentialDateArray(startDate: Date, endDate: Date): Date[] 
     return days;
 }
 
-
+// TODO: make this configurable
 function isWeekDay(date: Date): boolean {
     return date.getDay() >= 1 && date.getDay() <= 6
 }
 
-
-export function normalizeDeltas(repeatingChangeDelta: number, oneDayChangeDelta: number, rangedChangeDelta: number): number {
-        // So, I should have all possible deltas for each day.
-        // Merge them with the following rules:
-        // deltas > 0 are always applied
-        // deltas < 0 are only applied if a delta == 0 not found (0 is a sentinal for holiday on the company, so don't take time off on it)
-        // Don't take more than 8 hours a day off ( min(delta) == -8)
-        // deltas that are isNan are ignored (nothing happened)
-
-        // TODO: unroll this loop for speed and maybe readability?
-        let deltas: number[] = [repeatingChangeDelta, oneDayChangeDelta, rangedChangeDelta];
-
-        // no change (common case)
-        if (deltas.every(isNaN)) {
-            return 0;
+function hasDate(arr: Date[], dt: Date): boolean {
+    const dtTime = dt.getTime();
+    for (let d of arr) {
+        if (d.getTime() == dtTime) {
+            return true;
         }
-
-        let hasZeroDelta = deltas.some(num => num == 0);
-
-        let positiveDelta = 0;
-        let negativeDelta = 0;
-        // Note: NaN compares false to <, > , ==
-        for (let delta of deltas) {
-            if (delta > 0) {
-                positiveDelta += delta;
-            } else if (delta < 0 && !hasZeroDelta) {
-                // NOTE: it's already negative, no need to subtract!
-               negativeDelta += delta;
-            }
-        }
-
-        if (negativeDelta < -8) {
-            negativeDelta = -8;
-        }
-        // NOTE: it's already negative, no need to subtract!
-        return positiveDelta + negativeDelta;
+    }
+    return false;
 }
 
+// TODO max hours off and holidays should be configurable!
+export function normalizeDeltas(holidays: Date[], currentDay: Date, repeatingChangeDelta: number, oneDayChangeDelta: number, rangedChangeDelta: number): number {
+    // Always apply positive changes
+    // Only apply a negative change if it's not a weekend or holiday
+    // Take max -8 negative hours
+    let deltas: number[] = [repeatingChangeDelta, oneDayChangeDelta, rangedChangeDelta];
+
+    if (deltas.every(x => x == 0)) {
+        return 0;
+    }
+
+    let finalDelta: number = 0
+    for (let delta of deltas) {
+        if (delta > 0) {
+            finalDelta += delta;
+        }
+        else {
+            if ( !(!isWeekDay(currentDay) || hasDate(holidays, currentDay))) {
+                finalDelta += delta;
+            }
+        }
+    }
+
+    if (finalDelta < -8) {
+        finalDelta = -8;
+    }
+    return finalDelta;
+}
 
 // TODO: there are major parts of this not working...
 // all sorts of changes...
@@ -123,18 +124,15 @@ export function docToInterestingDates(doc: EditorInfo, allDays: Date[]): Map<Dat
 
     for (let currentDay of allDays) {
 
-        // zero has a special meaning here. Using a sentinal...
-        let repeatingChangeDelta: number = NaN;
-        let oneDayChangeDelta: number = NaN;
-        let rangedChangeDelta: number = NaN;
+        let repeatingChangeDelta: number = 0;
+        let oneDayChangeDelta: number = 0;
+        let rangedChangeDelta: number = 0;
 
         // only count Monday-Friday (TODO: make this a flag in the input somewhere?)
         for (let rangedChange of doc.ranged_changes) {
-            if (isWeekDay(currentDay)) {
-                if (currentDay.getTime() >= rangedChange.start_date.getTime() &&
-                        currentDay.getTime() <= rangedChange.end_date.getTime()) {
-                    rangedChangeDelta = rangedChange.hour_change;
-                    }
+            if (currentDay.getTime() >= rangedChange.start_date.getTime() &&
+                    currentDay.getTime() <= rangedChange.end_date.getTime()) {
+                rangedChangeDelta = rangedChange.hour_change;
             }
         }
 
@@ -151,7 +149,8 @@ export function docToInterestingDates(doc: EditorInfo, allDays: Date[]): Map<Dat
             }
         }
 
-        let normalizedDelta = normalizeDeltas(repeatingChangeDelta, oneDayChangeDelta, rangedChangeDelta);
+        // TODO: make this just mutate a map passed in instead of returning..
+        let normalizedDelta = normalizeDeltas(doc.holidays, currentDay, repeatingChangeDelta, oneDayChangeDelta, rangedChangeDelta);
 
         if (normalizedDelta != 0) {
             interestingDates.set(currentDay, normalizedDelta);
