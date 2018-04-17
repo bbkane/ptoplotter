@@ -8,12 +8,22 @@ import * as ptolib from './ptolib';
 
 function updateGraph(code_mirror_instance) {
   let doc: ptolib.EditorInfo = jsyaml.safeLoad(code_mirror_instance.getValue());
+
   // If there's no start date, use today
   if (!doc.start_date) {
     doc.start_date = new Date();
     // zero out hours, min, ...
-    doc.start_date.setHours(0, 0, 0, 0);
+    doc.start_date.setHours(12, 0, 0, 0);
   }
+
+  // get rid of holidays outside the range
+  {
+    const startDateTime = doc.start_date.getTime();
+    const endDateTime = doc.end_date.getTime();
+    let f =  x => x.getTime() > startDateTime && x.getTime() < endDateTime;
+    doc.holidays = doc.holidays.filter(f);
+  }
+
   // console.log(doc);
   const allDays: Date[] = ptolib.makeSequentialDateArray(doc.start_date, doc.end_date);
   let interestingDates: Map<Date, number> = ptolib.docToInterestingDates(doc, allDays);
