@@ -34,6 +34,5 @@ https://github.com/plotly/plotly.js/blob/master/README.md#building-plotlyjs-with
 - Add better CSS
 - Add tests!
 - add my name at the bottom (and a link to github)
-- copy tensorflow.org's deploy method
-- filter out holidays before start_date
+- copy tensorflow.org's deploy method ( https://github.com/tensorflow/playground )
 - grep -i todo .
