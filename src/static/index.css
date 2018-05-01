@@ -49,3 +49,14 @@ body {
     height: 100%;
     font-size: 13px;
 }
+
+.header > h1 {
+    text-align: left;
+    float: left;
+}
+
+.header > h3 {
+    text-align: right;
+    float: right;
+    padding-left: 40px;
+}

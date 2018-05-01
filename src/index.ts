@@ -72,7 +72,7 @@ window.addEventListener('load', function() {
 
   let editor = CodeMirror.fromTextArea(document.getElementById("source"), {
     lineNumbers: true,
-    tabMode: "indent"
+    // tabMode: "indent"
   });
 
   editor.on('change', updateGraph);
