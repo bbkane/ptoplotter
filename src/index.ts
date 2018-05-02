@@ -7,31 +7,37 @@ var Plotly = require('./custom-plotly'); // Holy crap, using a custom plotly mea
 import * as ptolib from './ptolib';
 
 function updateGraph(code_mirror_instance) {
-  let doc: ptolib.EditorInfo = jsyaml.safeLoad(code_mirror_instance.getValue());
+    let doc: ptolib.EditorInfo = jsyaml.safeLoad(code_mirror_instance.getValue());
 
-  // If there's no start date, use today
-  if (!doc.start_date) {
-    doc.start_date = new Date();
-    // zero out hours, min, ...
-    doc.start_date.setHours(12, 0, 0, 0);
-  }
+    // If there's no start date, use today
+    if (!doc.start_date) {
+        doc.start_date = new Date();
+        // zero out hours, min, ...
+        doc.start_date.setHours(12, 0, 0, 0);
+    }
 
-  // get rid of holidays outside the range
-  {
-    const startDateTime = doc.start_date.getTime();
-    const endDateTime = doc.end_date.getTime();
-    let f =  x => x.getTime() > startDateTime && x.getTime() < endDateTime;
-    doc.holidays = doc.holidays.filter(f);
-  }
+    if (!doc.hour_markers) { doc.hour_markers = []; }
+    if (!doc.holidays) { doc.holidays = []; }
+    if (!doc.repeating_changes) { doc.repeating_changes = []; }
+    if (!doc.one_day_changes) { doc.one_day_changes = []; }
+    if (!doc.ranged_changes) { doc.ranged_changes = []; }
 
-  // console.log(doc);
-  const allDays: Date[] = ptolib.makeSequentialDateArray(doc.start_date, doc.end_date);
-  let interestingDates: Map<Date, number> = ptolib.docToInterestingDates(doc, allDays);
-  // console.table(interestingDates);
-  let plotlyJSON: ptolib.Plot[] = ptolib.makePlots(doc, allDays, interestingDates);
-  // let plotlyJSON: ptolib.Plot[] = ptolib.docToPlotlyJSONOld(doc);
-  // console.log(plotlyJSON);
-  Plotly.newPlot('result', plotlyJSON);
+    // get rid of holidays outside the range
+    {
+        const startDateTime = doc.start_date.getTime();
+        const endDateTime = doc.end_date.getTime();
+        let f = x => x.getTime() > startDateTime && x.getTime() < endDateTime;
+        doc.holidays = doc.holidays.filter(f);
+    }
+
+    // console.log(doc);
+    const allDays: Date[] = ptolib.makeSequentialDateArray(doc.start_date, doc.end_date);
+    let interestingDates: Map<Date, number> = ptolib.docToInterestingDates(doc, allDays);
+    // console.table(interestingDates);
+    let plotlyJSON: ptolib.Plot[] = ptolib.makePlots(doc, allDays, interestingDates);
+    // let plotlyJSON: ptolib.Plot[] = ptolib.docToPlotlyJSONOld(doc);
+    // console.log(plotlyJSON);
+    Plotly.newPlot('result', plotlyJSON);
 }
 
 const startYAML = `--- # PDO
@@ -66,15 +72,15 @@ ranged_changes:
 
 // https://stackoverflow.com/a/38075603/2958070
 window.addEventListener('load', function() {
-  // The 'value' arg in the CodeMirror constructor isn't working, so let's
-  // hack it in...
-  document.getElementById('source').innerHTML = startYAML;
+    // The 'value' arg in the CodeMirror constructor isn't working, so let's
+    // hack it in...
+    document.getElementById('source').innerHTML = startYAML;
 
-  let editor = CodeMirror.fromTextArea(document.getElementById("source"), {
-    lineNumbers: true,
-    tabMode: "indent"
-  });
+    let editor = CodeMirror.fromTextArea(document.getElementById("source"), {
+        lineNumbers: true,
+        tabMode: "indent"
+    });
 
-  editor.on('change', updateGraph);
-  updateGraph(editor);
+    editor.on('change', updateGraph);
+    updateGraph(editor);
 });
