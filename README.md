@@ -36,3 +36,15 @@ https://github.com/plotly/plotly.js/blob/master/README.md#building-plotlyjs-with
 - add my name at the bottom (and a link to github)
 - copy tensorflow.org's deploy method ( https://github.com/tensorflow/playground )
 - grep -i todo .
+
+# DNS Notes
+
+Following https://help.github.com/articles/setting-up-an-apex-domain/#configuring-a-records-with-your-dns-provider
+
+I'm using the A record style cause NameCheap supports it
+
+from the advanced DNS page
+
+Okay, I was running into some errors, but I solved them by removing and
+readding ptoplotter.com to the custom domain thingie, then waiting a while.
+
