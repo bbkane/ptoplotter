@@ -36,6 +36,7 @@ https://github.com/plotly/plotly.js/blob/master/README.md#building-plotlyjs-with
 - add my name at the bottom (and a link to github)
 - copy tensorflow.org's deploy method ( https://github.com/tensorflow/playground )
 - grep -i todo .
+- Add a title with from this: https://plot.ly/javascript/plotlyjs-function-reference/#plotlynewplot
 
 # DNS Notes
 
@@ -47,4 +48,7 @@ from the advanced DNS page
 
 Okay, I was running into some errors, but I solved them by removing and
 readding ptoplotter.com to the custom domain thingie, then waiting a while.
+
+Crap, it looks like every time I run `npm run deploy`, I have to re-add the custom URL to GitHub...
+
 
